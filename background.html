@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!--
+Copyright 2011 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+Author: Ido Green (idog@google.com)
+-->
+<html>
+  <head>
+  </head>
+  <body>
+    <!--<script type="text/javascript" src="http://www.box.net/api/1.0/import.js"></script>-->
+    <script type="text/javascript" src="uploader.js"></script>
+    <script>
+      /*
+    function onContextMenuClick(onClickData, tab) {
+      // Get filesystem: url that is safe for use by this extension. Please note that this
+      // url is permitted to be used anywhere within this extension but you can't share it with
+      // other extension. So you can send it to another page within the same extension for example.
+      // If the browser is restarted, these temp file urls
+      // get invalidated.
+    console.log(onClickData);
+
+      var fileUrl = onClickData.srcUrl;
+      // Get file|directory entry:
+      chrome.fileSystem.resolveLocalFileSystemURL(fileUrl, function(entry) {
+        if (!entry) {
+          return;    // error check chrome.extensions.lastError 
+        }
+        // Get File blob, read its content, mail it to Grandma....
+        entry.file(function(file) {
+          var reader = new FileReader();
+          reader.onloadend = function(e) {
+             img.src = reader.result;
+          }
+          reader.readAsDataURL(file);
+        });
+      });
+    };
+
+    chrome.contextMenus.create({
+      "title" : "Upload this file to Box.net",
+      "type" : "normal",
+      "targetUrlPatterns" : ["filesystem:*.jpg", "filesystem:*.jpeg", "filesystem:*.png", "filesystem:*.gif", "filesystem:*.bmp"],
+      "contexts" : ["file"],
+      "onclick" : onContextMenuClick
+    });
+       */
+
+      //var filesToUpload = [];
+
+      chrome.fileBrowserHandler.onExecute.addListener(function(id, details) {
+        if (id == 'upload') {
+          /*filesToUpload = fileEntries;
+        chrome.windows.create({
+          url: chrome.extension.getURL('upload.html'),
+          type: "popup",
+          width: 620,
+          height: 565
+        });*/
+
+          var fm = new FileManager();
+          fm.uploadServer = "http://best-apps4.me/dropLoader/up2dropbox.php"; 
+
+          var fileEntries = details.entries;
+          for (var i = 0, entry; entry = fileEntries[i]; ++i) {
+            entry.file(function(file) {
+              fm.uploadFile(file);
+            });
+          }
+        }
+      });
+
+    </script>
+  </body>
+</html>

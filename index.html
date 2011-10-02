@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Dropbox For Chromebook</title>
+
+    <!-- CSS --> 
+    <link rel="stylesheet"  href="http://code.jquery.com/mobile/1.0rc1/jquery.mobile-1.0rc1.min.css" /> 
+    <style>
+      #pro1 {
+        visibility: hidden;
+
+      }
+      #pro1:after {
+        content: attr(data-percent) '%';
+        margin-left: 5px;
+        font-size:  110%;
+      }
+    </style>
+    <link rel="apple-touch-icon" href="images/up16.png"/>
+    <link rel="apple-touch-startup-image" href="images/up128.png" />
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content = "width = device-width, initial-scale = 1.0, minimum-scale = 1, maximum-scale = 5" />
+
+    <!-- JS  <script src="js/gen.js"></script>  -->
+    <script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.0rc1/jquery.mobile-1.0rc1.min.js"></script>
+
+    <script src="uploader.js"></script>
+    <script>
+      $(document).ready(function() {
+        $("body").css('width', '360px');
+        $("body").css('height', '600px');
+         
+        $("#clearData").click(function() {
+          removeItem('drop-email');
+          removeItem('drop-password');
+          alert("You are logout from Dropbox");
+        });
+        
+      });
+    </script>
+
+  </head>
+  <body>
+
+    <!-- Start of first page -->
+    <div data-role="page" id="home">
+      <div data-role="header">
+        <h1>Dropbox For Chromebook</h1>
+        <a href="#" data-role="button" data-icon="refresh" 
+           onclick="location.reload(true);" data-iconpos="notext"
+           title="Strat Over"></a>
+        <a href="#uploader" data-role="button" data-icon="plus" data-iconpos="notext"></a>
+      </div>
+
+      <div id="main-nav" data-role="content">
+
+        <ul data-role="listview" data-inset="true" data-theme="c" data-dividertheme="b">
+          <li><a href="#uploader" data-transition="pop">Upload</a></li>
+          <li><a href="http://greenido.wordpress.com" target="_blank">About</a></li>
+        </ul>
+
+        <a href="#" id="clearData" data-role="button" data-icon="gear" >Dropbox - LogOut</a>
+
+      </div><!-- /content -->
+
+      <iframe src="https://www.dropbox.com/m" width="100%" height="330" frameBorder="0">
+      <p>Oppss... something very strange just came to life. Go have a drink.</p></iframe>
+
+
+      <div data-role="footer">
+        <a href="http://greenido.wordpress.com" target="_blank">Ido's Blog</a>
+      </div>
+
+    </div><!-- /page -->
+
+
+    <!-- OTHER STUFF -->
+    <div data-role="page" id="uploader">
+      <div data-role="header">
+        <h1>Upload</h1>
+      </div>
+      <div data-role="content" class="mid-screen">
+        <form action="http://best-apps4.me/dropLoader/up2dropbox.php" method="post" enctype="multipart/form-data" rel="external">
+          <div data-role="fieldcontain">
+
+            <label for="dest">Destination directory (optional)</label>
+            <input type="text" name="dest" id="dest" 
+                   placeholder="/" title="e.g. 'myBackup/presentations', will be created if it doesn't exist" value="" />
+
+            <label for="file">File</label>
+            <input type="file" name="file" id="file"/> 
+
+            <div id="opFields"></div>
+            <script>
+              $('#opFields').html('');
+              if (!getItem("drop-email")) {
+                // need to ask for email - coz we don't have it in the localstorage
+                $('#opFields').append('<label for="email">Dropbox email</label> <input type="text" name="email" id="email" /><br/>');
+              }
+              if (!getItem("drop-password")) {
+                $('#opFields').append('<label for="password">Dropbox Password</label> <input type="password" name="password" id="password" />');
+              }
+            </script>
+
+            <br />
+            <a href="#" id="goButton" data-role="button" data-icon="star" >Upload</a>
+
+            <div id="statusReport"></div>
+            <div id="pro1" data-percent="0">
+              <progress min="0" max="100"></progress>
+            </div>
+          </div>
+        </form>
+
+      </div>
+    </div>
+
+
+    <script>
+      var bgPage = null;
+      var uploadPage = 'http://best-apps4.me/dropLoader/up2dropbox.php';
+      if (chrome.extension) {
+        bgPage = chrome.extension.getBackgroundPage();
+        //uploadPage = 'http://best-apps4.me/dropLoader/up2dropbox.php';
+      }
+
+      var fm = new FileManager();
+      fm.uploadServer = uploadPage; 
+
+      if (bgPage && bgPage.filesToUpload && bgPage.filesToUpload.length) {
+        var entry;
+        while(entry = bgPage.filesToUpload.pop()) {
+          entry.file(function(file) {
+            fm.uploadFile(file);
+          });
+        }
+      }
+
+      document.querySelector('#goButton').addEventListener('click', function(e) {
+        e.preventDefault();
+
+        var files = document.querySelector('#file').files;
+        if (!files.length) {
+          alert('Yo, Please note there is a limit to what we can do here...');
+          return;
+        }
+
+        var file = files[0];
+        fm.uploadFile(file);
+      }, false);
+
+    </script>
+
+  </body>
+</html>

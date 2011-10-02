@@ -1,0 +1,28 @@
+{
+    "name": "Dropbox For Chromebook",
+    "description": "Upload files from your Chromebook file manager and use Dropbox like a pro",
+    "version": "1.0",
+    "background_page" : "background.html",
+    "browser_action": {
+        "default_icon": "up19.png",
+        "popup": "index.html"
+    },
+    "file_browser_handlers": [
+    {
+        "id": "upload",
+        "default_title": "Save Dropbox",
+        "file_filters": [
+        "filesystem:*.*"
+        ]
+    }
+    ],
+    "permissions" : [
+    "fileBrowserHandler",
+    "http://*.best-apps4.me/"
+    ],
+    "icons": {
+        "up19": "up19.png",
+        "up48": "up48.png",
+        "up128": "up128.png" 
+    }
+}
